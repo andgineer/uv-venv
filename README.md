@@ -1,13 +1,14 @@
+<br/><br/>
+<img align="left" width="200" src="uv-python.png" />
 # uv-venv
-![uv-env](python.svg)
 
-Github Action to install [uv](https://github.com/astral-sh/uv).
-
-Also it creates and activates a virtual environment.
+Github Action to install [uv](https://github.com/astral-sh/uv) and create a virtual environment.
 
 It works on both Unix and Windows.
 
-If you try to use uv in a GitHub Action without this environment, 
+<br clear="left"/>
+
+This action is necessary because if you try to use uv in a GitHub Action without virtual environment, 
 you will get an error on Windows like this:
 
 ```shell

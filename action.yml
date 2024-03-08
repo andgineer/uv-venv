@@ -1,7 +1,6 @@
 name: 'Create and activate virtual environment with uv'
 description: 'In Github Action that use uv(Astral) create and activate virtual environment on Unix or Windows'
 branding:
-  icon: 'gear'
   color: 'yellow'
 
 runs:
