@@ -1,5 +1,5 @@
-<br/><br/>
 <img align="left" width="200" src="uv-python.png" />
+
 # uv-venv
 
 Github Action to install [uv](https://github.com/astral-sh/uv) and create a virtual environment.
@@ -26,4 +26,6 @@ modify the global one, which is not allowed.
       uses: andgineer/uv-venv@v1
 ```
 
-Example usage: [andginee/opensearch-log](https://github.com/andgineer/opensearch-log/blob/499da83c7f63786da43e5663140b0e20660d6f42/.github/workflows/ci.yml#L44).
+Example usage: [andginee/opensearch-log](https://github.com/andgineer/opensearch-log/blob/0d1060c57a6adac85d3559b52ec714c931f3b671/.github/workflows/ci.yml#L44).
+
+It also included to my [cookiecutter template](https://github.com/andgineer/cookiecutter-python-package)
