@@ -28,4 +28,4 @@ modify the global one, which is not allowed.
 
 Example usage: [andginee/opensearch-log](https://github.com/andgineer/opensearch-log/blob/0d1060c57a6adac85d3559b52ec714c931f3b671/.github/workflows/ci.yml#L44).
 
-It also included to my [cookiecutter template](https://github.com/andgineer/cookiecutter-python-package)
+It is also included to my [cookiecutter template](https://github.com/andgineer/cookiecutter-python-package)
