@@ -1,0 +1,22 @@
+name: 'Create and activate virtual environment with uv'
+description: 'In Github Action that use uv(Astral) create and activate virtual environment on Unix or Windows'
+runs:
+  using: 'composite'
+  steps:
+    - name: Create and activate a virtual environment (Windows)
+      shell: pwsh
+      if: ${{ runner.os == 'Windows' }}
+      run: |
+        irm https://astral.sh/uv/install.ps1 | iex
+        uv venv .venv
+        "VIRTUAL_ENV=.venv" | Out-File -FilePath $env:GITHUB_ENV -Append
+        "$PWD/.venv/Scripts" | Out-File -FilePath $env:GITHUB_PATH -Append
+
+    - name: Create and activate a virtual environment (Unix)
+      shell: bash
+      if: ${{ runner.os != 'Windows' }}
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        uv venv .venv
+        echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
+        echo "$PWD/.venv/bin" >> $GITHUB_PATH
