@@ -22,8 +22,16 @@ modify the global one, which is not allowed.
 ## Usage
 
 ```yaml
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
+        
     - name: Install uv environment
       uses: andgineer/uv-venv@v1
+
+    - name: Install dependencies
+      run: uv pip install -r requirements.dev.txt
 ```
 
 Example usage: [andginee/opensearch-log](https://github.com/andgineer/opensearch-log/blob/0d1060c57a6adac85d3559b52ec714c931f3b671/.github/workflows/ci.yml#L44).
