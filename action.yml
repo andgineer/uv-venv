@@ -1,4 +1,4 @@
-name: 'Setup UV'
+name: 'uv-venv'
 description: 'Setup uv (from Astral), create and activate virtual environment on Unix or Windows'
 branding:
   color: 'yellow'

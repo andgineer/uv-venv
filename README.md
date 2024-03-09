@@ -1,6 +1,6 @@
 <img align="left" width="200" src="uv-python.png" />
 
-# setup-uv
+# uv-venv
 
 Github Action to install [uv](https://github.com/astral-sh/uv) and create a virtual environment.
 
@@ -27,8 +27,8 @@ modify the global one, which is not allowed.
       with:
         python-version: ${{ matrix.python-version }}
         
-    - name: Install uv environment
-      uses: andgineer/setup-uv@v2
+    - name: Setup uv
+      uses: andgineer/uv-venv@v1
 
     - name: Install dependencies
       run: uv pip install -r requirements.dev.txt
