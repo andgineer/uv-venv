@@ -4,20 +4,19 @@
 
 Github Action to install [uv](https://github.com/astral-sh/uv) and create a virtual environment.
 
-It works on both Unix and Windows.
+Compatible with Unix and Windows.
 
 <br clear="left"/>
 
-This action is necessary because if you try to use uv in a GitHub Action without virtual environment, 
-you will get an error on Windows like this:
+### Why
+This action prevents Windows installation errors that occur when using uv without a virtual environment:
 
 ```shell
 error: failed to remove file `C:\hostedtoolcache\windows\Python\3.10.11\x64\Lib\site-packages\../../Scripts/uv.exe`
   Caused by: Access is denied. (os error 5)
 ```
 
-This happens because, without a virtual environment, it tries to 
-modify the global one, which is not allowed.
+The error occurs because uv attempts to modify the global Python environment, which is restricted in GitHub Actions.
 
 ## Usage
 
@@ -34,6 +33,6 @@ modify the global one, which is not allowed.
       run: uv pip install -r requirements.dev.txt
 ```
 
-Example usage: [andginee/opensearch-log](https://github.com/andgineer/opensearch-log/blob/0d1060c57a6adac85d3559b52ec714c931f3b671/.github/workflows/ci.yml#L44).
-
-It is also included to my [cookiecutter template](https://github.com/andgineer/cookiecutter-python-package)
+### Examples
+* [andginee/opensearch-log](https://github.com/andgineer/opensearch-log/blob/0d1060c57a6adac85d3559b52ec714c931f3b671/.github/workflows/ci.yml#L44)
+* [cookiecutter template](https://github.com/andgineer/cookiecutter-python-package)
