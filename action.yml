@@ -10,7 +10,7 @@ runs:
       shell: pwsh
       if: ${{ runner.os == 'Windows' }}
       run: |
-        irm https://astral.sh/uv/0.4.30/install.ps1 | iex
+        irm https://astral.sh/uv/install.ps1 | iex
         uv venv .venv
         "VIRTUAL_ENV=.venv" | Out-File -FilePath $env:GITHUB_ENV -Append
         "$PWD/.venv/Scripts" | Out-File -FilePath $env:GITHUB_PATH -Append
@@ -19,7 +19,7 @@ runs:
       shell: bash
       if: ${{ runner.os != 'Windows' }}
       run: |
-        curl -LsSf https://astral.sh/uv/0.4.30/install.sh | sh
+        curl -LsSf https://astral.sh/uv/install.sh | sh
         uv venv .venv
         echo "VIRTUAL_ENV=.venv" >> $GITHUB_ENV
         echo "$PWD/.venv/bin" >> $GITHUB_PATH
