@@ -27,7 +27,7 @@ The error occurs because uv attempts to modify the global Python environment, wh
         python-version: ${{ matrix.python-version }}
         
     - name: Setup uv
-      uses: andgineer/uv-venv@v1
+      uses: andgineer/uv-venv@v2
 
     - name: Install dependencies
       run: uv pip install -r requirements.dev.txt
