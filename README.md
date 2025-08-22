@@ -2,7 +2,7 @@
 
 # uv-venv
 
-Github Action to install [uv](https://github.com/astral-sh/uv) and create a virtual environment.
+GitHub Action to install [uv](https://github.com/astral-sh/uv) and create a virtual environment.
 
 Compatible with Unix and Windows.
 
@@ -34,5 +34,5 @@ The error occurs because uv attempts to modify the global Python environment, wh
 ```
 
 ### Examples
-* [andginee/opensearch-log](https://github.com/andgineer/opensearch-log/blob/0d1060c57a6adac85d3559b52ec714c931f3b671/.github/workflows/ci.yml#L44)
+* [andgineer/opensearch-log](https://github.com/andgineer/opensearch-log/blob/0d1060c57a6adac85d3559b52ec714c931f3b671/.github/workflows/ci.yml#L44)
 * [cookiecutter template](https://github.com/andgineer/cookiecutter-python-package)
