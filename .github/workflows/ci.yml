@@ -79,7 +79,7 @@ jobs:
             echo "ERROR: uv command not found"
             exit 1
           fi
-          echo "✓ uv is installed"
+          echo "[OK] uv is installed"
           uv --version
 
       - name: Verify venv exists
@@ -89,7 +89,7 @@ jobs:
             echo "ERROR: .venv directory not found"
             exit 1
           fi
-          echo "✓ .venv directory exists"
+          echo "[OK] .venv directory exists"
 
       - name: Verify venv is activated (Unix)
         if: runner.os != 'Windows'
@@ -99,7 +99,7 @@ jobs:
             echo "ERROR: VIRTUAL_ENV not set"
             exit 1
           fi
-          echo "✓ VIRTUAL_ENV is set to: $VIRTUAL_ENV"
+          echo "[OK] VIRTUAL_ENV is set to: $VIRTUAL_ENV"
 
           # Verify Python is from venv
           python_path=$(which python)
@@ -108,7 +108,7 @@ jobs:
             echo "ERROR: Python is not from venv"
             exit 1
           fi
-          echo "✓ Python is from venv"
+          echo "[OK] Python is from venv"
 
       - name: Verify venv is activated (Windows)
         if: runner.os == 'Windows'
@@ -118,7 +118,7 @@ jobs:
             Write-Error "ERROR: VIRTUAL_ENV not set"
             exit 1
           }
-          Write-Output "✓ VIRTUAL_ENV is set to: $env:VIRTUAL_ENV"
+          Write-Output "[OK] VIRTUAL_ENV is set to: $env:VIRTUAL_ENV"
 
           # Verify Python is from venv
           $pythonPath = (Get-Command python).Source
@@ -127,14 +127,14 @@ jobs:
             Write-Error "ERROR: Python is not from venv"
             exit 1
           }
-          Write-Output "✓ Python is from venv"
+          Write-Output "[OK] Python is from venv"
 
       - name: Test package installation with uv
         shell: bash
         run: |
           echo "Installing a test package..."
           uv pip install requests
-          python -c "import requests; print(f'✓ Successfully imported requests {requests.__version__}')"
+          python -c "import requests; print(f'[OK] Successfully imported requests {requests.__version__}')"
 
       - name: Test uv pip list
         shell: bash
@@ -151,7 +151,7 @@ jobs:
           if [[ ! "$pip_path" =~ ".venv" ]]; then
             echo "WARNING: pip is not from venv (this is expected with uv)"
           else
-            echo "✓ pip is from venv"
+            echo "[OK] pip is from venv"
           fi
 
   test-action-minimal:
@@ -207,5 +207,5 @@ jobs:
 
       - name: Verify installations
         run: |
-          python -c "import requests; import pytest; import black; print('✓ All packages imported successfully')"
+          python -c "import requests; import pytest; import black; print('[OK] All packages imported successfully')"
           uv pip list
