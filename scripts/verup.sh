@@ -11,10 +11,10 @@ set -u  # fail on unset variables
 set -e  # if any command fails, stop execution
 set -x  # print commands
 
-if [[ $(git diff-index HEAD) || $(git status) == *"is ahead"* ]]; then
+if ! git diff-index --quiet HEAD -- || [[ $(git status) == *"is ahead"* ]]; then
   echo -e "\n\033[33mPlease commit and push all changes" \
     "before setting version tag\033[39m\n"
-  exit -1
+  exit 1
 fi
 
 # force fetching tags from all branches
@@ -41,21 +41,21 @@ echo -e "Last version: \033[33m$major.$minor.$build\033[39m"
 if [[ "$1" == "release" ]]; then
   build=0
   minor=0
-  major=$(echo $major + 1 | bc)
-  NEW_VERSION=$(echo "$major")
+  major=$((major + 1))
+  NEW_VERSION="$major"
 elif [[ "$1" == "feature" ]]; then
   build=0
-  minor=$(echo $minor + 1 | bc)
-  NEW_VERSION=$(echo "$major.$minor")
+  minor=$((minor + 1))
+  NEW_VERSION="$major.$minor"
 elif [[ "$1" == "bug" ]]; then
-  build=$(echo $build + 1 | bc)
-  NEW_VERSION=$(echo "$major.$minor.$build")
+  build=$((build + 1))
+  NEW_VERSION="$major.$minor.$build"
 else
   echo "usage: ./verup_action.sh [release|feature|bug]"
-  exit -1
+  exit 1
 fi
 
-NEW_TAG=$(echo "v$NEW_VERSION")
+NEW_TAG="v$NEW_VERSION"
 echo -e "New version tag: \033[32m$NEW_TAG\033[39m"
 
 read -r -p "Set the version? [y/N] " response

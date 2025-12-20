@@ -1,0 +1,211 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Unit Tests on Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.dev.txt
+
+      - name: Run unit tests
+        run: |
+          pytest -m unit -v
+
+      - name: Run integration tests
+        run: |
+          pytest -m integration -v
+
+      - name: Run all tests with coverage
+        run: |
+          pytest --cov --cov-report=xml --cov-report=term
+
+      - name: Upload coverage to artifacts
+        uses: actions/upload-artifact@v4
+        if: matrix.python-version == '3.11'
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            htmlcov/
+
+  test-action:
+    name: Test on ${{ matrix.os }} with Python ${{ matrix.python-version }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Setup uv and venv (test the action)
+        uses: ./
+
+      - name: Verify uv is installed
+        shell: bash
+        run: |
+          if ! command -v uv &> /dev/null; then
+            echo "ERROR: uv command not found"
+            exit 1
+          fi
+          echo "✓ uv is installed"
+          uv --version
+
+      - name: Verify venv exists
+        shell: bash
+        run: |
+          if [ ! -d ".venv" ]; then
+            echo "ERROR: .venv directory not found"
+            exit 1
+          fi
+          echo "✓ .venv directory exists"
+
+      - name: Verify venv is activated (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          if [ -z "$VIRTUAL_ENV" ]; then
+            echo "ERROR: VIRTUAL_ENV not set"
+            exit 1
+          fi
+          echo "✓ VIRTUAL_ENV is set to: $VIRTUAL_ENV"
+
+          # Verify Python is from venv
+          python_path=$(which python)
+          echo "Python path: $python_path"
+          if [[ ! "$python_path" =~ ".venv" ]]; then
+            echo "ERROR: Python is not from venv"
+            exit 1
+          fi
+          echo "✓ Python is from venv"
+
+      - name: Verify venv is activated (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not $env:VIRTUAL_ENV) {
+            Write-Error "ERROR: VIRTUAL_ENV not set"
+            exit 1
+          }
+          Write-Output "✓ VIRTUAL_ENV is set to: $env:VIRTUAL_ENV"
+
+          # Verify Python is from venv
+          $pythonPath = (Get-Command python).Source
+          Write-Output "Python path: $pythonPath"
+          if ($pythonPath -notmatch ".venv") {
+            Write-Error "ERROR: Python is not from venv"
+            exit 1
+          }
+          Write-Output "✓ Python is from venv"
+
+      - name: Test package installation with uv
+        shell: bash
+        run: |
+          echo "Installing a test package..."
+          uv pip install requests
+          python -c "import requests; print(f'✓ Successfully imported requests {requests.__version__}')"
+
+      - name: Test uv pip list
+        shell: bash
+        run: |
+          echo "Installed packages:"
+          uv pip list
+
+      - name: Verify pip in PATH points to venv (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          pip_path=$(which pip)
+          echo "pip path: $pip_path"
+          if [[ ! "$pip_path" =~ ".venv" ]]; then
+            echo "WARNING: pip is not from venv (this is expected with uv)"
+          else
+            echo "✓ pip is from venv"
+          fi
+
+  test-action-minimal:
+    name: Test minimal workflow
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup uv
+        uses: ./
+
+      - name: Quick test
+        run: |
+          uv --version
+          python --version
+          uv pip install pytest
+          python -c "import pytest; print(f'pytest {pytest.__version__} installed successfully')"
+
+  test-action-requirements:
+    name: Test with requirements file
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Create test requirements file
+        run: |
+          cat > requirements.test.txt << EOF
+          requests>=2.31.0
+          pytest>=7.0.0
+          black>=23.0.0
+          EOF
+
+      - name: Setup uv
+        uses: ./
+
+      - name: Install dependencies from requirements
+        run: |
+          uv pip install -r requirements.test.txt
+
+      - name: Verify installations
+        run: |
+          python -c "import requests; import pytest; import black; print('✓ All packages imported successfully')"
+          uv pip list
