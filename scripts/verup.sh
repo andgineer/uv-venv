@@ -41,21 +41,21 @@ echo -e "Last version: \033[33m$major.$minor.$build\033[39m"
 if [[ "$1" == "release" ]]; then
   build=0
   minor=0
-  major=$((major + 1))
-  NEW_VERSION="$major"
+  major=$(echo $major + 1 | bc)
+  NEW_VERSION=$(echo "$major")
 elif [[ "$1" == "feature" ]]; then
   build=0
-  minor=$((minor + 1))
-  NEW_VERSION="$major.$minor"
+  minor=$(echo $minor + 1 | bc)
+  NEW_VERSION=$(echo "$major.$minor")
 elif [[ "$1" == "bug" ]]; then
-  build=$((build + 1))
-  NEW_VERSION="$major.$minor.$build"
+  build=$(echo $build + 1 | bc)
+  NEW_VERSION=$(echo "$major.$minor.$build")
 else
   echo "usage: ./verup_action.sh [release|feature|bug]"
   exit 1
 fi
 
-NEW_TAG="v$NEW_VERSION"
+NEW_TAG=$(echo "v$NEW_VERSION")
 echo -e "New version tag: \033[32m$NEW_TAG\033[39m"
 
 read -r -p "Set the version? [y/N] " response
