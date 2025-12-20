@@ -18,7 +18,7 @@ if ! git diff-index --quiet HEAD -- || [[ $(git status) == *"is ahead"* ]]; then
 fi
 
 # force fetching tags from all branches
-git fetch --tags
+git fetch --tags 2>&1 || true
 TAG=$(git describe \
   --match "v[0-9]*" \
   --abbrev=0 \
@@ -29,11 +29,13 @@ major=0
 minor=0
 build=0
 
-regex="v([0-9]+)(\.([0-9]+))?(\.([0-9]+))?"
-if [[ $TAG =~ $regex ]]; then
-    major="${BASH_REMATCH[1]}"
-    minor="${BASH_REMATCH[3]:-0}"
-    build="${BASH_REMATCH[5]:-0}"
+if [[ -n "$TAG" ]]; then
+    # Remove 'v' prefix and parse version numbers
+    VERSION="${TAG#v}"
+    IFS='.' read -r major minor build <<< "$VERSION"
+    major=${major:-0}
+    minor=${minor:-0}
+    build=${build:-0}
 fi
 
 echo -e "Last version: \033[33m$major.$minor.$build\033[39m"
@@ -85,5 +87,5 @@ git push origin $NEW_TAG
 git push
 
 # Updating local tags
-git tag -d $NEW_TAG
-git fetch --prune --tags
+git tag -d $NEW_TAG 2>/dev/null || true
+git fetch --prune --tags 2>&1 || true
